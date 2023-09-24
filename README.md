@@ -1,350 +1,63 @@
-oclif-hello-world
-=================
-
-oclif example Hello World CLI
-
-[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![CircleCI](https://circleci.com/gh/oclif/hello-world/tree/main.svg?style=shield)](https://circleci.com/gh/oclif/hello-world/tree/main)
-[![GitHub license](https://img.shields.io/github/license/oclif/hello-world)](https://github.com/oclif/hello-world/blob/main/LICENSE)
+# File Foundry CLI
 
-<!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
-<!-- tocstop -->
-# Usage
-<!-- usage -->
-```sh-session
-$ npm install -g file-foundry-cli
-$ file-foundry COMMAND
-running command...
-$ file-foundry (--version)
-file-foundry-cli/0.0.0 darwin-arm64 node-v18.15.0
-$ file-foundry --help [COMMAND]
-USAGE
-  $ file-foundry COMMAND
-...
-```
-<!-- usagestop -->
-# Commands
-<!-- commands -->
-* [`file-foundry hello PERSON`](#file-foundry-hello-person)
-* [`file-foundry hello world`](#file-foundry-hello-world)
-* [`file-foundry help [COMMANDS]`](#file-foundry-help-commands)
-* [`file-foundry plugins`](#file-foundry-plugins)
-* [`file-foundry plugins:install PLUGIN...`](#file-foundry-pluginsinstall-plugin)
-* [`file-foundry plugins:inspect PLUGIN...`](#file-foundry-pluginsinspect-plugin)
-* [`file-foundry plugins:install PLUGIN...`](#file-foundry-pluginsinstall-plugin-1)
-* [`file-foundry plugins:link PLUGIN`](#file-foundry-pluginslink-plugin)
-* [`file-foundry plugins:uninstall PLUGIN...`](#file-foundry-pluginsuninstall-plugin)
-* [`file-foundry plugins:uninstall PLUGIN...`](#file-foundry-pluginsuninstall-plugin-1)
-* [`file-foundry plugins:uninstall PLUGIN...`](#file-foundry-pluginsuninstall-plugin-2)
-* [`file-foundry plugins update`](#file-foundry-plugins-update)
+The File Foundry CLI is your ultimate companion for managing and organizing files on your media server. Whether you're dealing with a colossal collection of movies, TV shows, or a vast array of digital media, this command-line tool is designed to make your life easier.
 
-## `file-foundry hello PERSON`
+## Getting Started
 
-Say hello
+Ready to forge your media server files into perfect shape? Follow these steps to get started:
 
-```
-USAGE
-  $ file-foundry hello PERSON -f <value>
+1. **Installation**: Start by installing the File Foundry CLI using npm:
 
-ARGUMENTS
-  PERSON  Person to say hello to
+   ```
+   npm install -g file-foundry-cli
+   ```
 
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
+2. **Configuration**: Before you begin organizing your files, you'll need to configure the tool with the paths to your media server directories:
 
-DESCRIPTION
-  Say hello
+   ```
+   file-foundry-cli configure
+   ```
 
-EXAMPLES
-  $ oex hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
+   This command will guide you through the setup process, ensuring that the CLI knows where to find your files.
 
-_See code: [dist/commands/hello/index.ts](https://github.com/coltenkrauter/file-foundry-cli/blob/v0.0.0/dist/commands/hello/index.ts)_
+3. **Usage**: Now you're all set! You can start using the File Foundry CLI to manage and organize your media server files. For example:
 
-## `file-foundry hello world`
+   - To organize your media files:
 
-Say hello world
+     ```
+     file-foundry-cli organize
+     ```
 
-```
-USAGE
-  $ file-foundry hello world
+   - To perform other tasks, explore the CLI's various commands and options in the [Documentation](https://github.com/coltenkrauter/file-foundry-cli/wiki).
 
-DESCRIPTION
-  Say hello world
+4. **Enjoy**: Sit back and let the File Foundry CLI do the heavy lifting. Your media server will be more organized than ever before!
 
-EXAMPLES
-  $ file-foundry hello world
-  hello world! (./src/commands/hello/world.ts)
-```
+## Backstory
 
-_See code: [dist/commands/hello/world.ts](https://github.com/coltenkrauter/file-foundry-cli/blob/v0.0.0/dist/commands/hello/world.ts)_
+Imagine this: a sprawling media server packed to the brim with gigabytes (or even terabytes) of digital treasures. You've spent countless hours curating your collection, ensuring that every file is properly named and organized. But the more you collect, the harder it becomes to keep things tidy. That's where the File Foundry CLI comes in.
 
-## `file-foundry help [COMMANDS]`
+The journey to creating this tool began with a familiar tale. Frustration mounted as Colten grappled with a hodgepodge of messy files and buggy bash scripts. It was clear that a more powerful, flexible, and user-friendly solution was needed. So, the File Foundry CLI was born!
 
-Display help for file-foundry.
+## What's in a Name?
 
-```
-USAGE
-  $ file-foundry help [COMMANDS] [-n]
+- **File**: Because, well, it's all about files!
+- **Foundry**: A place of creation and transformation. Your files will be reshaped and molded as you see fit.
+- **CLI**: The Command-Line Interface that empowers you to take control of your media server files like a pro.
 
-ARGUMENTS
-  COMMANDS  Command to show help for.
+## Powered by OCLIF
 
-FLAGS
-  -n, --nested-commands  Include all nested commands in the output.
+The File Foundry CLI is proudly built on top of the OCLIF framework, a powerful foundation for creating command-line interfaces. This framework ensures that you get a robust and consistent experience while using our tool.
 
-DESCRIPTION
-  Display help for file-foundry.
-```
+## Collaborate and Contribute
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.19/src/commands/help.ts)_
+We believe that great tools are built collaboratively. We invite you to join us in enhancing the File Foundry CLI. Whether it's adding new features, fixing bugs, or improving documentation, your contributions are invaluable.
 
-## `file-foundry plugins`
+**Credit**
 
-List installed plugins.
+Thanks for the assist from [GPT-4](https://openai.com/research/gpt-4) in research and setting this up.
 
-```
-USAGE
-  $ file-foundry plugins [--json] [--core]
+## License
 
-FLAGS
-  --core  Show core plugins.
+The File Foundry CLI is open-source and released under the MIT License. Feel free to use it, modify it, and share it with fellow media server enthusiasts.
 
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  List installed plugins.
-
-EXAMPLES
-  $ file-foundry plugins
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v3.8.0/src/commands/plugins/index.ts)_
-
-## `file-foundry plugins:install PLUGIN...`
-
-Installs a plugin into the CLI.
-
-```
-USAGE
-  $ file-foundry plugins:install PLUGIN...
-
-ARGUMENTS
-  PLUGIN  Plugin to install.
-
-FLAGS
-  -f, --force    Run yarn install with force flag.
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Installs a plugin into the CLI.
-  Can be installed from npm or a git url.
-
-  Installation of a user-installed plugin will override a core plugin.
-
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
-  the CLI without the need to patch and update the whole CLI.
-
-
-ALIASES
-  $ file-foundry plugins add
-
-EXAMPLES
-  $ file-foundry plugins:install myplugin 
-
-  $ file-foundry plugins:install https://github.com/someuser/someplugin
-
-  $ file-foundry plugins:install someuser/someplugin
-```
-
-## `file-foundry plugins:inspect PLUGIN...`
-
-Displays installation properties of a plugin.
-
-```
-USAGE
-  $ file-foundry plugins:inspect PLUGIN...
-
-ARGUMENTS
-  PLUGIN  [default: .] Plugin to inspect.
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  Displays installation properties of a plugin.
-
-EXAMPLES
-  $ file-foundry plugins:inspect myplugin
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v3.8.0/src/commands/plugins/inspect.ts)_
-
-## `file-foundry plugins:install PLUGIN...`
-
-Installs a plugin into the CLI.
-
-```
-USAGE
-  $ file-foundry plugins:install PLUGIN...
-
-ARGUMENTS
-  PLUGIN  Plugin to install.
-
-FLAGS
-  -f, --force    Run yarn install with force flag.
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Installs a plugin into the CLI.
-  Can be installed from npm or a git url.
-
-  Installation of a user-installed plugin will override a core plugin.
-
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
-  the CLI without the need to patch and update the whole CLI.
-
-
-ALIASES
-  $ file-foundry plugins add
-
-EXAMPLES
-  $ file-foundry plugins:install myplugin 
-
-  $ file-foundry plugins:install https://github.com/someuser/someplugin
-
-  $ file-foundry plugins:install someuser/someplugin
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v3.8.0/src/commands/plugins/install.ts)_
-
-## `file-foundry plugins:link PLUGIN`
-
-Links a plugin into the CLI for development.
-
-```
-USAGE
-  $ file-foundry plugins:link PLUGIN
-
-ARGUMENTS
-  PATH  [default: .] path to plugin
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Links a plugin into the CLI for development.
-  Installation of a linked plugin will override a user-installed or core plugin.
-
-  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
-  command will override the user-installed or core plugin implementation. This is useful for development work.
-
-
-EXAMPLES
-  $ file-foundry plugins:link myplugin
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v3.8.0/src/commands/plugins/link.ts)_
-
-## `file-foundry plugins:uninstall PLUGIN...`
-
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ file-foundry plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ file-foundry plugins unlink
-  $ file-foundry plugins remove
-```
-
-## `file-foundry plugins:uninstall PLUGIN...`
-
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ file-foundry plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ file-foundry plugins unlink
-  $ file-foundry plugins remove
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v3.8.0/src/commands/plugins/uninstall.ts)_
-
-## `file-foundry plugins:uninstall PLUGIN...`
-
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ file-foundry plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ file-foundry plugins unlink
-  $ file-foundry plugins remove
-```
-
-## `file-foundry plugins update`
-
-Update installed plugins.
-
-```
-USAGE
-  $ file-foundry plugins update [-h] [-v]
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Update installed plugins.
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v3.8.0/src/commands/plugins/update.ts)_
-<!-- commandsstop -->
+Happy file organizing!
