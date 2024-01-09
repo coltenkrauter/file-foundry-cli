@@ -52,7 +52,7 @@ The File Foundry CLI is proudly built on top of the OCLIF framework, a powerful 
 
 We believe that great tools are built collaboratively. We invite you to join us in enhancing the File Foundry CLI. Whether it's adding new features, fixing bugs, or improving documentation, your contributions are invaluable.
 
-**Credit**
+## Credit
 
 Thanks for the assist from [GPT-4](https://openai.com/research/gpt-4) in research and setting this up.
 
