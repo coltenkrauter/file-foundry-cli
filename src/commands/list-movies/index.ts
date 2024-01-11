@@ -1,10 +1,9 @@
 import {Args, Command, Flags} from '@oclif/core'
-import {readdirSync, statSync} from 'node:fs'
-import {join, extname, basename} from 'node:path'
+
 // eslint-disable-next-line no-restricted-imports
 import * as colors from 'colors'
 
-const movieExtensions = new Set(['.mp4', '.mov', '.avi', '.mkv', '.flv', '.wmv', '.mpeg'])
+import {MovieResult, listMovies} from '../../utils/files'
 
 export default class ListMovies extends Command {
   static description = 'Say hello'
@@ -16,66 +15,42 @@ hello friend from oclif! (./src/commands/hello/index.ts)
   ]
 
   static flags = {
-    depth: Flags.integer({aliases: ['d'], description: 'How many directories should be recursed (default: infinite)?', required: false}),
-    includePath: Flags.boolean({aliases: ['p'], description: 'Include the path (default: false)?', required: false}),
-    includeExt: Flags.boolean({aliases: ['e'], description: 'Include the extension (default: false)?', required: false}),
+    depth: Flags.integer({aliases: ['d'], description: 'How many directories should be recursed (default: infinite)?', required: false, default: Number.POSITIVE_INFINITY}),
+    includePath: Flags.boolean({aliases: ['p'], description: 'Include the path (default: false)?', required: false, default: false}),
+    includeExt: Flags.boolean({aliases: ['e'], description: 'Include the extension (default: false)?', required: false, default: false}),
+    omitPrefix: Flags.string({aliases: ['op'], description: 'Omit files with the given prefix (default: _)?', required: false, default: '.'}),
   }
 
   static args = {
-    path: Args.string({description: 'List all movies in the given directory. (default: ./)', required: false}),
+    path: Args.string({description: 'List all movies in the given directory. (default: ./)', required: false, default: './'}),
   }
 
   async run(): Promise<void> {
     const {args, flags} = await this.parse(ListMovies)
 
-    this.log(colors.blue.bold(`Listing all movies in the given path [${args.path}]...`))
+    // eslint-disable-next-line func-call-spacing
+    console.log(colors.blue.bold(`Listing all movies in the given path [${args.path}]...`))
 
-    const movieFiles = ListMovies.getMovieFiles(args.path, flags.depth, flags.includePath, flags.includeExt)
+    const results: MovieResult[] = [];
 
-    for (const file of movieFiles) {
-      console.log(colors.green('✔ ') + colors.white(file))
-    }
-
-    this.log(colors.blue.bold(`Found ${movieFiles.length} movie files.`))
-  }
-
-  static getMovieFiles(
-    dirPath: string | undefined,
-    depth = Number.POSITIVE_INFINITY,
-    includePath = false,
-    includeExtension = false,
-  ): string[] {
-    if (dirPath === undefined) {
-      dirPath = './'
-    }
-
-    const movieFiles: string[] = []
-
-    function scanDirectory(currentPath: string, currentDepth: number) {
-      if (currentDepth < 0) {
-        return
-      }
-
-      const files = readdirSync(currentPath)
-      for (const file of files) {
-        const filePath = join(currentPath, file)
-        if (statSync(filePath).isDirectory()) {
-          scanDirectory(filePath, currentDepth - 1)
+    // eslint-disable-next-line no-unexpected-multiline
+    (async () => {
+      for await (const result of listMovies(args.path, flags.depth, [], flags.omitPrefix)) {
+        results.push(result)
+        if (result.resolution?.error) {
+          console.log(colors.red('✘ ') + colors.white(result.path) + colors.red(String(result.resolution.format)))
+          console.log(colors.red('✘ - Undefined resolution'))
+        } else if (Number(result.resolution?.height) < 720) {
+          console.log(colors.red('✘ ') + colors.white(result.path) + colors.red(String(result.resolution.format)))
+          console.log(colors.red('✘ - Low resolution'))
         } else {
-          const fileExt = extname(file).toLowerCase()
-          if (movieExtensions.has(fileExt)) {
-            let fileName = includePath ? filePath : basename(file)
-            if (!includeExtension) {
-              fileName = fileName.replace(fileExt, '')
-            }
-
-            movieFiles.push(fileName)
-          }
+          console.log(colors.green('✔ ') + colors.white(result.path) + colors.gray(String(result.resolution.format)))
         }
       }
-    }
+    })()
 
-    scanDirectory(dirPath, depth)
-    return movieFiles
+    const paths = results.map(result => result.path)
+    console.log('Total:' + paths.length)
+    console.log('Deduped total:' + new Set(paths).size)
   }
 }

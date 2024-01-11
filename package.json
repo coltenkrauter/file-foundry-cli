@@ -20,11 +20,13 @@
     "@oclif/core": "^2",
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^3.8.0",
-    "colors": "^1.4.0"
+    "colors": "^1.4.0",
+    "fluent-ffmpeg": "^2.1.2"
   },
   "devDependencies": {
     "@oclif/test": "^2.5.5",
     "@types/chai": "^4",
+    "@types/fluent-ffmpeg": "^2.1.24",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.18.53",
     "chai": "^4",
