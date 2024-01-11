@@ -2,7 +2,17 @@ import {readdirSync, statSync} from 'node:fs'
 import {basename, extname, join} from 'node:path'
 import ffmpeg = require('fluent-ffmpeg')
 
-const movieExtensions = ['.mp4', '.mov', '.avi', '.mkv', '.flv', '.wmv', '.mpeg']
+export const movieExtensions = ['.mp4', '.mov', '.avi', '.mkv', '.flv', '.wmv', '.mpeg']
+
+/**
+ * Removes all whitespace from the given string.
+ *
+ * @param {string} str - The string from which to remove whitespace.
+ * @returns {string} The string with all whitespace removed.
+ */
+export function removeWhitespace(str: string): string {
+  return str.replace(/\s+/g, '')
+}
 
 /**
  * Returns the first character of a string in lowercase.
@@ -23,7 +33,7 @@ export function firstCharLowercased(str: string): string {
  * @param {string} path - The directory path to scan.
  * @param {number} depth - The depth of subdirectories to traverse. 0 for the current directory,
  * 1 for its immediate subdirectories, etc. Negative depth returns an empty array.
- * @param {string | undefined} omitPrefix - Optional. Prefix of files to ignore.
+ * @param {string} omitPrefix - Optional. Prefix of files to ignore.
  * @returns {string[]} An array of file paths.
  *
  * This function reads the directory contents using readdirSync. For each item, if it's a directory,
@@ -46,18 +56,29 @@ export function * listFiles(path: string, depth: number, omitPrefix?: string): G
 }
 
 export interface MovieResult {
-  path: string;
-  filename: string;
-  extension: string;
-  resolution: VideoResolution;
+  altExtension: string
+  baseFilename: string
+  coreFilename: string
+  extension: string
+  filename: string
+  path: string
+  resolution: VideoResolution
 }
 
 async function generateMovieResults(path: string) {
   const resolution = await getVideoResolution(path)
+  const filename = basename(path)
+  const extension = extname(filename)
+  const baseFilename = filename.replace(extension, '')
+  const altExtension = extname(baseFilename)
+  const coreFilename = baseFilename.replace(altExtension, '')
   return {
+    altExtension,
+    baseFilename,
+    coreFilename,
+    extension,
+    filename,
     path,
-    filename: basename(path),
-    extension: extname(path),
     resolution,
   }
 }
@@ -69,20 +90,20 @@ async function generateMovieResults(path: string) {
  * @param {string} path - The directory path to scan.
  * @param {number} depth - The depth of subdirectories to traverse. 0 for the current directory,
  * 1 for its immediate subdirectories, etc. Negative depth returns an empty array.
- * @param {string[]} additionalExtensions - Optional. Additional file extensions to include.
- * @param {string | undefined} omitPrefix - Optional. Prefix of files to ignore.
+ * @param {string[]} extensions - Optional. Replace file extensions used during the scan.
+ * @param {string} omitPrefix - Optional. Prefix of files to ignore.
  * @returns {MovieListResult} An object containing `paths` (an array of file paths that match the
  * movie extensions) and `extensions` (a set of the extensions used for filtering).
  */
 export async function * listMovies(
   path: string,
   depth: number,
-  additionalExtensions: string[] = [],
+  extensions: string[] = [],
   omitPrefix = '.',
 ): AsyncGenerator<MovieResult> {
-  const extensions = new Set([...movieExtensions, ...additionalExtensions].map(ext => ext.toLowerCase()))
   for await (const resultPath of listFiles(path, depth, omitPrefix)) {
-    if (extensions.has(extname(resultPath).toLowerCase())) {
+    const lowerExtensions = new Set([...extensions].map(ext => ext.toLowerCase()))
+    if (lowerExtensions.has(extname(resultPath).toLowerCase())) {
       yield generateMovieResults(resultPath)
     }
   }
