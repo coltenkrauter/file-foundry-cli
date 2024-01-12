@@ -1,9 +1,9 @@
 import {Args, Command, Flags} from '@oclif/core'
+import ora from 'ora';
 
-// eslint-disable-next-line no-restricted-imports
-import * as colors from 'colors'
+import colors from 'colors';
 
-import {MovieResult, listMovies, movieExtensions, removeWhitespace} from '../../utils/files'
+import {MovieResult, listMovies, movieExtensions, plural, removeWhitespace} from '../../utils/files.js'
 
 interface ListMoviesResult {
   results: MovieResult[]
@@ -59,19 +59,26 @@ hello friend from oclif! (./src/commands/hello/index.ts)
     const {args, flags} = await this.parse(ListMovies)
 
     // eslint-disable-next-line func-call-spacing
-    console.log(colors.blue.bold(`Listing all movies in the given path [${args.path}]...`))
+    console.log(colors.blue.bold(`Listing all movies in the given path [${args.path}]`))
+    const spinner = ora('Warming up the engine...').start();
 
     // Collect all promises from the async generator into an array
     const results: MovieResult[] = []
     const extensions = removeWhitespace(flags.extensions).split(',')
+    let index = 0;
     for await (const result of listMovies(args.path, flags.depth, extensions, flags.omitPrefix)) {
+      index++
       results.push(result)
+      spinner.text = `Scanned ${colors.white.bold(String(index))} movie file${plural(index)}`
     }
+    spinner.stop();
 
-    return {
+    const response = {
       results,
       total: results.length,
       concerns: results.filter(result => Number(result.resolution.height) < flags.minAcceptableHeight),
     }
+
+    return response 
   }
 }

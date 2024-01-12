@@ -2,6 +2,24 @@
 
 The File Foundry CLI is your ultimate companion for managing and organizing files on your media server. Whether you're dealing with a colossal collection of movies, TV shows, or a vast array of digital media, this command-line tool is designed to make your life easier.
 
+[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
+[![GitHub license](https://img.shields.io/github/license/oclif/hello-world)](https://github.com/oclif/hello-world/blob/main/LICENSE)
+
+## Usage
+<!-- usage -->
+```zsh
+$ npm install -g file-foundry-cli
+$ ffc COMMAND
+running command...
+$ ffc (--version)
+file-foundry-cli/0.0.0 darwin-arm64 node-v18.18.0
+$ ffc --help [COMMAND]
+USAGE
+  $ ffc COMMAND
+...
+```
+<!-- usagestop -->
+
 ## Getting Started
 
 Ready to forge your media server files into perfect shape? Follow these steps to get started:

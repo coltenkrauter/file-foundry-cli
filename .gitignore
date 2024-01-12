@@ -1,45 +1,13 @@
-# ---> Node.js and NPM packages
-node_modules/
-package-lock.json
-yarn.lock
-
-# ---> TypeScript Compiler Output
-dist/
-*.tsbuildinfo
-
-# ---> IDE - Visual Studio Code
-.vscode/
-*.code-workspace
-
-# ---> IDE - WebStorm, IntelliJ
-.idea/
-
-# ---> MacOS
-.DS_Store
-
-# ---> Logs
-logs/
-*.log
-npm-debug.log*
-
-# ---> Environment variables
-.env
-
-# ---> Dependency directories
-bower_components/
-
-# ---> Unix OS generated files
-*.swp
-*.swo
-*~
-
-# ---> Temporary files
-*.tmp
-*.temp
-*.swp
-*.swo
-
-# ---> Operating System generated files
-ehthumbs.db
-Thumbs.db
-EOL
+**/.DS_Store
+*-debug.log
+*-error.log
+/.idea
+/.nyc_output
+/dist
+/lib
+/package-lock.json
+/tmp
+/yarn.lock
+node_modules
+oclif.lock
+oclif.manifest.json

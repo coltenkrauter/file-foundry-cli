@@ -1,6 +1,6 @@
 import {readdirSync, statSync} from 'node:fs'
 import {basename, extname, join} from 'node:path'
-import ffmpeg = require('fluent-ffmpeg')
+import ffmpeg from 'fluent-ffmpeg';
 
 export const movieExtensions = ['.mp4', '.mov', '.avi', '.mkv', '.flv', '.wmv', '.mpeg']
 
@@ -12,6 +12,16 @@ export const movieExtensions = ['.mp4', '.mov', '.avi', '.mkv', '.flv', '.wmv', 
  */
 export function removeWhitespace(str: string): string {
   return str.replace(/\s+/g, '')
+}
+
+/**
+ * Determines the plural form of a word based on the provided index.
+ *
+ * @param index - The count or index used to determine if the plural form ('s') is needed.
+ * @returns An empty string if the index equals 1, otherwise returns 's'.
+ */
+export function plural(index: number): string {
+  return index === 1 ? '' : 's';
 }
 
 /**
