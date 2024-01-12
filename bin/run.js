@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {printIntro, printOutro} from './helpers.js'
+import {printIntro, printOutro, printGracefulOutro} from './helpers.js'
 
 async function main() {
   printIntro()
@@ -8,5 +8,10 @@ async function main() {
   await execute({dir: import.meta.url})
   printOutro()
 }
+
+process.on('SIGINT', () => {
+  printGracefulOutro();
+  process.exit(0);
+});
 
 await main()

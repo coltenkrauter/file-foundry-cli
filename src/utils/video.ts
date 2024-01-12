@@ -1,5 +1,5 @@
 import ffmpeg from 'fluent-ffmpeg'
-import {VideoResult, VideoResolution, firstCharLowercased, listFiles, isKit} from './index.js'
+import {VideoResult, VideoResolution, firstCharLowercased as getLowerFirstChar, listFiles, isKit} from './index.js'
 import {basename, extname} from 'node:path'
 
 /**
@@ -28,23 +28,27 @@ export async function * listVideos(
 	}
 }
 
-export async function getVideoResolution(path: string): Promise<VideoResolution> {
+export async function getVideoResolution(filePath: string): Promise<VideoResolution> {
 	return new Promise(resolve => {
-		ffmpeg.ffprobe(path, (error: string, metadata: { streams: any[] }) => {
+		ffmpeg.ffprobe(filePath, (error: string, metadata: { streams: any[] }) => {
 			if (error) {
 				resolve({error})
 			} else {
 				const videoStream = metadata.streams.find(s => s.codec_type === 'video')
-				const scanType = videoStream.field_order || 'progressive' // Assumption
 				if (videoStream) {
+					const {width, height, codec_name, avg_frame_rate, duration, field_order} = videoStream
+					let scanType = 'interlaced' // The interlaced values for field_order are tt, bb, tb, and bt.
+					if (field_order && ['progressive', 'unknown', 'undefined'].includes(field_order)) {
+						scanType = 'progressive' // Assumption – Choosing to default to progressive
+					}
 					resolve({
-						width: videoStream.width,
-						height: videoStream.height,
-						codec: videoStream.codec_name,
-						frameRate: videoStream.avg_frame_rate,
-						durationSeconds: videoStream.duration,
+						width,
+						height,
+						codec: codec_name,
+						frameRate: avg_frame_rate,
+						durationSeconds: duration,
 						scanType,
-						format: videoStream.height + firstCharLowercased(scanType),
+						format: height + getLowerFirstChar(scanType),
 					})
 				} else {
 					resolve({})

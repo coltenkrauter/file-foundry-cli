@@ -1,6 +1,6 @@
 #!/usr/bin/env -S node --loader ts-node/esm --no-warnings=ExperimentalWarning
 
-import {printIntro, printOutro} from './helpers.js'
+import {printIntro, printOutro, printGracefulOutro} from './helpers.js'
 
 async function main() {
   printIntro()
@@ -8,5 +8,10 @@ async function main() {
   await execute({development: true, dir: import.meta.url})
   printOutro()
 }
+
+process.on('SIGINT', () => {
+  printGracefulOutro();
+  process.exit(0);
+});
 
 await main()

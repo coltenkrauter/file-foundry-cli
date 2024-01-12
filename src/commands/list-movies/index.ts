@@ -84,15 +84,19 @@ export default class ListMovies extends Command {
     }
     spinner.stop()
 
+    console.log(results.map(result => result.filePath))
+
     // Generate Report
-    const concerns = results.filter(result => Number(result.resolution.height) < flags.minAcceptableHeight).length
+    const concerns = results
+      .filter(result => Number(result.resolution.height) < flags.minAcceptableHeight).length
     console.log(colors.green.bold(`\n${LogMessages.ReportSummary}`))
     console.log(`Total Movie Files: ${results.length}`)
     console.log(colors.red(`Total Concerns (Resolution < ${flags.minAcceptableHeight}): ${concerns}`))
     console.log(`Unique Filenames: ${new Set(results.map(r => r.filename)).size}`)
     console.log(`Movies in Kits: ${results.filter(r => r.isKit).length}`)
     console.log('Movies by File Extension:')
-    Object.entries(extensionCount).forEach(([ext, count]) => console.log(` ${ext.toLowerCase()}: ${count}`))
+    Object.entries(extensionCount)
+      .forEach(([ext, count]) => console.log(` ${ext.toLowerCase()}: ${count}`))
     console.log('Movies by Resolution:')
     Object.entries(resolutionCount)
       .sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
