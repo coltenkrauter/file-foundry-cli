@@ -1,7 +1,7 @@
 {
   "author": "Colten Krauter",
   "bin": {
-    "ffc": "./bin/run.js"
+    "ff": "./bin/run.js"
   },
   "dependencies": {
     "@oclif/core": "^3",

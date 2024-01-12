@@ -1,8 +1,6 @@
 import {readdirSync, statSync} from 'node:fs'
 import {basename, extname, join} from 'node:path'
-import ffmpeg from 'fluent-ffmpeg';
-
-export const movieExtensions = ['.mp4', '.mov', '.avi', '.mkv', '.flv', '.wmv', '.mpeg']
+import ffmpeg from 'fluent-ffmpeg'
 
 /**
  * Removes all whitespace from the given string.
@@ -21,7 +19,7 @@ export function removeWhitespace(str: string): string {
  * @returns An empty string if the index equals 1, otherwise returns 's'.
  */
 export function plural(index: number): string {
-  return index === 1 ? '' : 's';
+  return index === 1 ? '' : 's'
 }
 
 /**
@@ -75,7 +73,7 @@ export interface MovieResult {
   resolution: VideoResolution
 }
 
-async function generateMovieResults(path: string) {
+export async function generateMovieResults(path: string) {
   const resolution = await getVideoResolution(path)
   const filename = basename(path)
   const extension = extname(filename)

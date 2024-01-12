@@ -1,9 +1,9 @@
+import colors from 'colors'
+import ora from 'ora'
 import {Args, Command, Flags} from '@oclif/core'
-import ora from 'ora';
 
-import colors from 'colors';
-
-import {MovieResult, listMovies, movieExtensions, plural, removeWhitespace} from '../../utils/files.js'
+import {MovieResult, listMovies, plural, removeWhitespace} from '../../utils/files.js'
+import {LogMessages, movieExtensions} from '../../utils/constants.js'
 
 interface ListMoviesResult {
   results: MovieResult[]
@@ -12,15 +12,16 @@ interface ListMoviesResult {
 }
 export default class ListMovies extends Command {
   public static enableJsonFlag = true
-  static description = 'List all movies in the given directory'
+  public static description = 'List all movies in the given directory'
 
-  static examples = [
-    `$ ff hello friend --from oclif
-hello friend from oclif! (./src/commands/hello/index.ts)
-`,
+  public static examples = [
+    `$ ff list-movies ./path/to/movies --depth 3`,
+    `$ ff list-movies ./path/to/movies --omitPrefix .`,
+    `$ ff list-movies ./path/to/movies --extensions mp4,mov`,
+    `$ ff list-movies ./path/to/movies --minAcceptableHeight 720`,
   ]
 
-  static flags = {
+  public static flags = {
     depth: Flags.integer({
       aliases: ['d'],
       description: 'How many directories should be recursed (default: infinite)?',
@@ -47,7 +48,7 @@ hello friend from oclif! (./src/commands/hello/index.ts)
     }),
   }
 
-  static args = {
+  public static args = {
     path: Args.string({
       description: 'List all movies in the given directory. (default: ./)',
       required: false,
@@ -58,27 +59,48 @@ hello friend from oclif! (./src/commands/hello/index.ts)
   async run(): Promise<ListMoviesResult> {
     const {args, flags} = await this.parse(ListMovies)
 
-    // eslint-disable-next-line func-call-spacing
     console.log(colors.blue.bold(`Listing all movies in the given path [${args.path}]`))
-    const spinner = ora('Warming up the engine...').start();
+    const spinner = ora(LogMessages.WarmUp).start()
 
     // Collect all promises from the async generator into an array
     const results: MovieResult[] = []
     const extensions = removeWhitespace(flags.extensions).split(',')
-    let index = 0;
+    const extensionCount: {[key: string]: number} = {}
+    const resolutionCount: {[key: string]: number} = {}
+    let index = 0
     for await (const result of listMovies(args.path, flags.depth, extensions, flags.omitPrefix)) {
       index++
       results.push(result)
       spinner.text = `Scanned ${colors.white.bold(String(index))} movie file${plural(index)}`
-    }
-    spinner.stop();
 
-    const response = {
+      // Counting extensions
+      const ext = result.extension.toLowerCase()
+      extensionCount[ext] = (extensionCount[ext] || 0) + 1
+
+      // Counting resolutions
+      if (result.resolution.format) {
+        resolutionCount[result.resolution.format] = (resolutionCount[result.resolution.format] || 0) + 1
+      }
+    }
+    spinner.stop()
+
+    // Generate Report
+    const concerns = results.filter(result => Number(result.resolution.height) < flags.minAcceptableHeight).length
+    console.log(colors.green.bold(`\n${LogMessages.ReportSummary}`))
+    console.log(`Total Movie Files: ${results.length}`)
+    console.log(colors.red(`Total Concerns (Resolution < ${flags.minAcceptableHeight}): ${concerns}`))
+    console.log(`Unique Filenames: ${new Set(results.map(r => r.filename)).size}`)
+    console.log('Movies by File Extension:')
+    Object.entries(extensionCount).forEach(([ext, count]) => console.log(` ${ext.toLowerCase()}: ${count}`))
+    console.log('Movies by Resolution:')
+    Object.entries(resolutionCount)
+      .sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
+      .forEach(([res, count]) => console.log(` ${res}: ${count}`))
+
+    return {
       results,
       total: results.length,
       concerns: results.filter(result => Number(result.resolution.height) < flags.minAcceptableHeight),
-    }
-
-    return response 
+    } 
   }
 }
