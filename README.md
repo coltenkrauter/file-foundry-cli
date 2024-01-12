@@ -9,13 +9,13 @@ The File Foundry CLI is your ultimate companion for managing and organizing file
 <!-- usage -->
 ```zsh
 $ npm install -g file-foundry-cli
-$ ffc COMMAND
+$ ff COMMAND
 running command...
-$ ffc (--version)
+$ ff (--version)
 file-foundry-cli/0.0.0 darwin-arm64 node-v18.18.0
-$ ffc --help [COMMAND]
+$ ff --help [COMMAND]
 USAGE
-  $ ffc COMMAND
+$ ff COMMAND
 ...
 ```
 <!-- usagestop -->

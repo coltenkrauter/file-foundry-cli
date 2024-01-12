@@ -2,7 +2,7 @@ import colors from 'colors'
 import ora from 'ora'
 import {Args, Command, Flags} from '@oclif/core'
 
-import {MovieResult, listMovies, plural, removeWhitespace} from '../../utils/files.js'
+import {MovieResult, listVideos, plural, removeWhitespace} from '../../utils/index.js'
 import {LogMessages, movieExtensions} from '../../utils/constants.js'
 
 interface ListMoviesResult {
@@ -68,7 +68,7 @@ export default class ListMovies extends Command {
     const extensionCount: {[key: string]: number} = {}
     const resolutionCount: {[key: string]: number} = {}
     let index = 0
-    for await (const result of listMovies(args.path, flags.depth, extensions, flags.omitPrefix)) {
+    for await (const result of listVideos(args.path, flags.depth, extensions, flags.omitPrefix)) {
       index++
       results.push(result)
       spinner.text = `Scanned ${colors.white.bold(String(index))} movie file${plural(index)}`
