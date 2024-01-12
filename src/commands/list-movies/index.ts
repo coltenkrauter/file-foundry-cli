@@ -19,6 +19,7 @@ export default class ListMovies extends Command {
     `$ ff list-movies ./path/to/movies --omitPrefix .`,
     `$ ff list-movies ./path/to/movies --extensions mp4,mov`,
     `$ ff list-movies ./path/to/movies --minAcceptableHeight 720`,
+    `$ ff list-movies /Volumes/TrueNAS-Phantom/Media/movies --depth 3 --json`,
   ]
 
   public static flags = {
@@ -74,11 +75,11 @@ export default class ListMovies extends Command {
       const {fileDetails, videoDetails} = result
       spinner.text = `Scanned ${colors.white.bold(String(index))} movie file${plural(index)}`
 
-      // Counting extensions
+      // Counting extensions for report
       const ext = fileDetails.extension.toLowerCase()
       extensionCount[ext] = (extensionCount[ext] || 0) + 1
 
-      // Counting resolutions
+      // Counting resolutions for report
       if (videoDetails.format) {
         resolutionCount[videoDetails.format] = (resolutionCount[videoDetails.format] || 0) + 1
       }

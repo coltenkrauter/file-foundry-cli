@@ -30,3 +30,19 @@ export function getLowerFirstChar(str: string): string {
   if (str.length === 0) return ''
   return str.charAt(0).toLowerCase()
 }
+
+/**
+ * Capitalizes the first letter of each word in a string.
+ *
+ * @param {string} str - The string to be capitalized.
+ * @returns {string} The capitalized string.
+ *
+ * This function takes a string and returns it with the first letter of each word in uppercase
+ * and all other letters in lowercase, similar to a title case.
+ */
+export function capitalize(str: string): string {
+  return str.toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}

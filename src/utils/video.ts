@@ -1,5 +1,5 @@
 import ffmpeg from 'fluent-ffmpeg'
-import {VideoResult, VideoDetails, getLowerFirstChar, listFiles, isKit} from './index.js'
+import {VideoResult, VideoDetails, getLowerFirstChar, listFiles, isKit, capitalize} from './index.js'
 import {basename, extname} from 'node:path'
 
 /**
@@ -66,7 +66,10 @@ export async function getVideoResult(filePath: string): Promise<VideoResult> {
 
 	const parts = filenameWithoutExtension.split('.')
 	const baseFilename = parts.shift() || ''
-
+	
+	const match = baseFilename.match(/(.+?)(?:\s\((\d{4})\))?$/)
+	const name = match?.[1].trim()
+    const year = match?.[2] ? parseInt(match[2], 10) : undefined
 	return {
 		fileDetails: {
 			filename,
@@ -76,6 +79,10 @@ export async function getVideoResult(filePath: string): Promise<VideoResult> {
 			additionalExtensions: parts.map(ext => `.${ext}`),
 			isKit: await isKit(filePath),
 		},
-		videoDetails: await getVideoDetails(filePath),
+		videoDetails: {
+			...await getVideoDetails(filePath),
+			name,
+			year,
+		},
 	}
 }

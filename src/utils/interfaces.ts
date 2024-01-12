@@ -1,20 +1,22 @@
 export interface FileDetails {
-	filename: string
-	baseFilename: string
-	filePath: string
-	extension: string
 	additionalExtensions: string[]
+	baseFilename: string
+	extension: string
+	filePath: string
+	filename: string
 	isKit: boolean
 }
 
 export interface VideoDetails {
-	width?: number
-	height?: number
 	codec?: string
-	frameRate?: string
 	durationSeconds?: number
-	scanType?: string
 	format?: string
+	frameRate?: string
+	height?: number
+	name?: string
+	scanType?: string
+	width?: number
+	year?: number
 }
 
 export interface VideoResult {
