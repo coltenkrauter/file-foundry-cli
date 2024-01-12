@@ -26,7 +26,7 @@ export function plural(index: number): string {
  * @param {string} str - The string from which the first character is extracted.
  * @returns {string} The first character of the input string in lowercase, or an empty string if the input is empty.
  */
-export function firstCharLowercased(str: string): string {
+export function getLowerFirstChar(str: string): string {
   if (str.length === 0) return ''
   return str.charAt(0).toLowerCase()
 }

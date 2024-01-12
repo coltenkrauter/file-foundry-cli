@@ -1,5 +1,5 @@
 import ffmpeg from 'fluent-ffmpeg'
-import {VideoResult, VideoResolution, firstCharLowercased as getLowerFirstChar, listFiles, isKit} from './index.js'
+import {VideoResult, VideoDetails, getLowerFirstChar, listFiles, isKit} from './index.js'
 import {basename, extname} from 'node:path'
 
 /**
@@ -23,16 +23,17 @@ export async function * listVideos(
 	for await (const resultPath of listFiles(path, depth, omitPrefix)) {
 		const lowerExtensions = new Set([...extensions].map(ext => ext.toLowerCase()))
 		if (lowerExtensions.has(extname(resultPath).toLowerCase())) {
-			yield getVideoResults(resultPath)
+			yield getVideoResult(resultPath)
 		}
 	}
 }
 
-export async function getVideoResolution(filePath: string): Promise<VideoResolution> {
+export async function getVideoDetails(filePath: string): Promise<VideoDetails> {
 	return new Promise(resolve => {
 		ffmpeg.ffprobe(filePath, (error: string, metadata: { streams: any[] }) => {
 			if (error) {
-				resolve({error})
+				console.error(filePath, error)
+				resolve({})
 			} else {
 				const videoStream = metadata.streams.find(s => s.codec_type === 'video')
 				if (videoStream) {
@@ -58,21 +59,23 @@ export async function getVideoResolution(filePath: string): Promise<VideoResolut
 	})
 }
 
-export async function getVideoResults(filePath: string): Promise<VideoResult> {
-	const resolution = await getVideoResolution(filePath)
+export async function getVideoResult(filePath: string): Promise<VideoResult> {
 	const filename = basename(filePath)
 	const extension = extname(filename)
-	const baseFilename = filename.replace(extension, '')
-	const altExtension = extname(baseFilename)
-	const coreFilename = baseFilename.replace(altExtension, '')
+	const filenameWithoutExtension = filename.replace(extension, '')
+
+	const parts = filenameWithoutExtension.split('.')
+	const baseFilename = parts.shift() || ''
+
 	return {
-		altExtension,
-		baseFilename,
-		coreFilename,
-		extension,
-		filename,
-		filePath,
-		resolution,
-		isKit: await isKit(filePath),
+		fileDetails: {
+			filename,
+			baseFilename,
+			filePath,
+			extension,
+			additionalExtensions: parts.map(ext => `.${ext}`),
+			isKit: await isKit(filePath),
+		},
+		videoDetails: await getVideoDetails(filePath),
 	}
 }

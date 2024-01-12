@@ -1,4 +1,13 @@
-export interface VideoResolution {
+export interface FileDetails {
+	filename: string
+	baseFilename: string
+	filePath: string
+	extension: string
+	additionalExtensions: string[]
+	isKit: boolean
+}
+
+export interface VideoDetails {
 	width?: number
 	height?: number
 	codec?: string
@@ -6,16 +15,9 @@ export interface VideoResolution {
 	durationSeconds?: number
 	scanType?: string
 	format?: string
-	error?: string
 }
 
 export interface VideoResult {
-	altExtension: string
-	baseFilename: string
-	coreFilename: string
-	extension: string
-	filename: string
-	filePath: string
-	resolution: VideoResolution
-	isKit: boolean
+	fileDetails: FileDetails
+	videoDetails: VideoDetails
 }

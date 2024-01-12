@@ -71,29 +71,30 @@ export default class ListMovies extends Command {
     for await (const result of listVideos(args.path, flags.depth, extensions, flags.omitPrefix)) {
       index++
       results.push(result)
+      const {fileDetails, videoDetails} = result
       spinner.text = `Scanned ${colors.white.bold(String(index))} movie file${plural(index)}`
 
       // Counting extensions
-      const ext = result.extension.toLowerCase()
+      const ext = fileDetails.extension.toLowerCase()
       extensionCount[ext] = (extensionCount[ext] || 0) + 1
 
       // Counting resolutions
-      if (result.resolution.format) {
-        resolutionCount[result.resolution.format] = (resolutionCount[result.resolution.format] || 0) + 1
+      if (videoDetails.format) {
+        resolutionCount[videoDetails.format] = (resolutionCount[videoDetails.format] || 0) + 1
       }
     }
     spinner.stop()
 
-    console.log(results.map(result => result.filePath))
+    console.log(results.map(r => r.fileDetails.filePath))
 
     // Generate Report
     const concerns = results
-      .filter(result => Number(result.resolution.height) < flags.minAcceptableHeight).length
+      .filter(r => Number(r.videoDetails.height) < flags.minAcceptableHeight).length
     console.log(colors.green.bold(`\n${LogMessages.ReportSummary}`))
     console.log(`Total Movie Files: ${results.length}`)
     console.log(colors.red(`Total Concerns (Resolution < ${flags.minAcceptableHeight}): ${concerns}`))
-    console.log(`Unique Filenames: ${new Set(results.map(r => r.filename)).size}`)
-    console.log(`Movies in Kits: ${results.filter(r => r.isKit).length}`)
+    console.log(`Unique Filenames: ${new Set(results.map(r => r.fileDetails.filename)).size}`)
+    console.log(`Movies in Kits: ${results.filter(r => r.fileDetails.isKit).length}`)
     console.log('Movies by File Extension:')
     Object.entries(extensionCount)
       .forEach(([ext, count]) => console.log(` ${ext.toLowerCase()}: ${count}`))
@@ -105,7 +106,7 @@ export default class ListMovies extends Command {
     return {
       results,
       total: results.length,
-      concerns: results.filter(result => Number(result.resolution.height) < flags.minAcceptableHeight),
+      concerns: results.filter(r => Number(r.videoDetails.height) < flags.minAcceptableHeight),
     } 
   }
 }
