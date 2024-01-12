@@ -1,6 +1,6 @@
 import ffmpeg from 'fluent-ffmpeg'
-import {MovieResult, VideoResolution, firstCharLowercased, getFilenameWithoutExt, listFiles} from './index.js'
-import {basename, dirname, extname} from 'node:path'
+import {VideoResult, VideoResolution, firstCharLowercased, listFiles, isKit} from './index.js'
+import {basename, extname} from 'node:path'
 
 /**
  * Recursively lists movie files in a specified directory and its subdirectories up to a given depth,
@@ -19,11 +19,11 @@ export async function * listVideos(
 	depth: number,
 	extensions: string[] = [],
 	omitPrefix = '.',
-): AsyncGenerator<MovieResult> {
+): AsyncGenerator<VideoResult> {
 	for await (const resultPath of listFiles(path, depth, omitPrefix)) {
 		const lowerExtensions = new Set([...extensions].map(ext => ext.toLowerCase()))
 		if (lowerExtensions.has(extname(resultPath).toLowerCase())) {
-			yield generateMovieResults(resultPath)
+			yield getVideoResults(resultPath)
 		}
 	}
 }
@@ -53,24 +53,10 @@ export async function getVideoResolution(path: string): Promise<VideoResolution>
 		})
 	})
 }
-  
-  
-/**
- * Checks if a movie file is part of a kit, meaning it's in a directory with the same base name.
- * 
- * @param filePath The full path of the file.
- * @returns true if the file is part of a kit, false otherwise.
- */
-async function isKit(filePath: string): Promise<boolean> {
-	const directoryName = basename(dirname(filePath))
-	const fileNameWithoutExt = getFilenameWithoutExt(filePath)
 
-	return directoryName === fileNameWithoutExt
-}
-
-export async function generateMovieResults(path: string) {
-	const resolution = await getVideoResolution(path)
-	const filename = basename(path)
+export async function getVideoResults(filePath: string): Promise<VideoResult> {
+	const resolution = await getVideoResolution(filePath)
+	const filename = basename(filePath)
 	const extension = extname(filename)
 	const baseFilename = filename.replace(extension, '')
 	const altExtension = extname(baseFilename)
@@ -81,9 +67,8 @@ export async function generateMovieResults(path: string) {
 		coreFilename,
 		extension,
 		filename,
-		path,
+		filePath,
 		resolution,
+		isKit: await isKit(filePath),
 	}
 }
-  
-  

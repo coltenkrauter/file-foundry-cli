@@ -1,5 +1,5 @@
 import {readdirSync, statSync} from 'node:fs'
-import {basename, join} from 'node:path'
+import {basename, dirname, join} from 'node:path'
 
 /**
  * Recursively lists files in a directory and its subdirectories up to a given depth.
@@ -39,4 +39,17 @@ export function getFilenameWithoutExt(filePath: string): string {
 	const base = basename(filePath)
 	const firstDotIndex = base.indexOf('.')
 	return firstDotIndex === -1 ? base : base.substring(0, firstDotIndex)
+}
+
+/**
+ * Checks if a file is part of a kit, meaning it's in a directory with the same base name.
+ * 
+ * @param filePath The full path of the file.
+ * @returns true if the file is part of a kit, false otherwise.
+ */
+export async function isKit(filePath: string): Promise<boolean> {
+	const directoryName = basename(dirname(filePath))
+	const fileNameWithoutExt = getFilenameWithoutExt(filePath)
+
+	return directoryName === fileNameWithoutExt
 }

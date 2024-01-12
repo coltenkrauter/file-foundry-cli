@@ -9,12 +9,13 @@ export interface VideoResolution {
 	error?: string
 }
 
-export interface MovieResult {
+export interface VideoResult {
 	altExtension: string
 	baseFilename: string
 	coreFilename: string
 	extension: string
 	filename: string
-	path: string
+	filePath: string
 	resolution: VideoResolution
+	isKit: boolean
 }

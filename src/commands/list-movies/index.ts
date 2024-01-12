@@ -2,13 +2,13 @@ import colors from 'colors'
 import ora from 'ora'
 import {Args, Command, Flags} from '@oclif/core'
 
-import {MovieResult, listVideos, plural, removeWhitespace} from '../../utils/index.js'
+import {VideoResult, listVideos, plural, removeWhitespace} from '../../utils/index.js'
 import {LogMessages, movieExtensions} from '../../utils/constants.js'
 
 interface ListMoviesResult {
-  results: MovieResult[]
+  results: VideoResult[]
   total: number
-  concerns: MovieResult[]
+  concerns: VideoResult[]
 }
 export default class ListMovies extends Command {
   public static enableJsonFlag = true
@@ -63,7 +63,7 @@ export default class ListMovies extends Command {
     const spinner = ora(LogMessages.WarmUp).start()
 
     // Collect all promises from the async generator into an array
-    const results: MovieResult[] = []
+    const results: VideoResult[] = []
     const extensions = removeWhitespace(flags.extensions).split(',')
     const extensionCount: {[key: string]: number} = {}
     const resolutionCount: {[key: string]: number} = {}
@@ -90,6 +90,7 @@ export default class ListMovies extends Command {
     console.log(`Total Movie Files: ${results.length}`)
     console.log(colors.red(`Total Concerns (Resolution < ${flags.minAcceptableHeight}): ${concerns}`))
     console.log(`Unique Filenames: ${new Set(results.map(r => r.filename)).size}`)
+    console.log(`Movies in Kits: ${results.filter(r => r.isKit).length}`)
     console.log('Movies by File Extension:')
     Object.entries(extensionCount).forEach(([ext, count]) => console.log(` ${ext.toLowerCase()}: ${count}`))
     console.log('Movies by Resolution:')
