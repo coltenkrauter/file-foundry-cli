@@ -5,7 +5,7 @@
  * @returns {string} The string with all whitespace removed.
  */
 export function removeWhitespace(str: string): string {
-	return str.replace(/\s+/g, '')
+	return str.replaceAll(/\s+/g, '')
 }
 
 /**
@@ -55,7 +55,7 @@ export function capitalize(str: string): string {
  * @throws {Error} Throws an error if there are consecutive commas in the input.
  */
 export function parseList(str: string): string[] {
-	if (str.match(/,,/)) {
+	if (/,,/.test(str)) {
 		throw new Error("Input contains consecutive commas, which is not allowed.");
 	}
 

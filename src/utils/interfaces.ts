@@ -4,13 +4,13 @@ export interface FileDetails {
 	extension: string
 	filePath: string
 	filename: string
-	isKit: boolean
 	group: string
+	isKit: boolean
 }
 
 export interface VideoDetails {
 	codec?: string
-	durationSeconds?: number
+	durationSeconds?: string
 	format?: string
 	frameRate?: string
 	height?: number

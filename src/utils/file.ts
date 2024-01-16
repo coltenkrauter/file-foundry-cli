@@ -1,5 +1,6 @@
 import {readdirSync, statSync} from 'node:fs'
 import {basename as _basename, dirname as _dirname, extname as _extname, join} from 'node:path'
+
 import {memoize} from './memoize.js'
 
 export const basename = memoize(_basename)
@@ -45,7 +46,7 @@ export function * listFiles(path: string, depth: number, omitPrefixes?: string[]
 const getFilenameWithoutExt = memoize((filePath: string): string => {
 	const base = basename(filePath)
 	const firstDotIndex = base.indexOf('.')
-	return firstDotIndex === -1 ? base : base.substring(0, firstDotIndex)
+	return firstDotIndex === -1 ? base : base.slice(0, Math.max(0, firstDotIndex))
 })
 
 /**

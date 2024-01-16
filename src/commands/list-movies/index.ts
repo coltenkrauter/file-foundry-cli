@@ -1,18 +1,27 @@
+import {Args, Command, Flags} from '@oclif/core'
+// eslint-disable-next-line no-restricted-imports
 import colors from 'colors'
 import ora from 'ora'
-import {Args, Command, Flags} from '@oclif/core'
 
-import {VideoResult, listVideos, parseList, plural, removeWhitespace} from '../../utils/index.js'
 import {LogMessages, plexExtrasSuffixes, videoExtensions} from '../../utils/constants.js'
+import {VideoResult, listVideos, parseList, plural} from '../../utils/index.js'
 
 interface ListMoviesResult {
+	concerns: VideoResult[]
 	results: VideoResult[]
 	total: number
-	concerns: VideoResult[]
 }
 export default class ListMovies extends Command {
-	public static enableJsonFlag = true
+	public static args = {
+		path: Args.string({
+			default: './',
+			description: 'List all movies in the given directory.',
+			required: false,
+		}),
+	}
+
 	public static description = 'List all movies in the given directory'
+	public static enableJsonFlag = true
 
 	public static examples = [
 		`$ ff list-movies ./path/to/movies --depth 3`,
@@ -25,48 +34,40 @@ export default class ListMovies extends Command {
 	public static flags = {
 		depth: Flags.integer({
 			aliases: ['d'],
+			default: Number.POSITIVE_INFINITY,
 			description: 'How many directories should be recursed?',
 			required: false,
-			default: Number.POSITIVE_INFINITY,
-		}),
-		omitPrefixes: Flags.string({
-			aliases: ['op'],
-			description: 'Omit files that match one of the given prefixes.',
-			required: false,
-			default: '.',
 		}),
 		extensions: Flags.string({
 			aliases: ['e'],
+			default: videoExtensions.join(','),
 			description: 'Replace the default movie file extensions used during the scan.',
 			required: false,
-			default: videoExtensions.join(','),
-		}),
-		omitSuffixes: Flags.string({
-			aliases: ['os'],
-			description: 'Omit files that match one of the given suffixes (extensions ignored).',
-			required: false,
-			default: plexExtrasSuffixes.join(','),
 		}),
 		minAcceptableHeight: Flags.integer({
 			aliases: ['d'],
+			default: 720,
 			description: 'What is the minimum acceptable height in pixels?',
 			required: false,
-			default: 720,
 		}),
-	}
-
-	public static args = {
-		path: Args.string({
-			description: 'List all movies in the given directory.',
+		omitPrefixes: Flags.string({
+			aliases: ['op'],
+			default: '.',
+			description: 'Omit files that match one of the given prefixes.',
 			required: false,
-			default: './',
+		}),
+		omitSuffixes: Flags.string({
+			aliases: ['os'],
+			default: plexExtrasSuffixes.join(','),
+			description: 'Omit files that match one of the given suffixes (extensions ignored).',
+			required: false,
 		}),
 	}
 
 	async run(): Promise<ListMoviesResult> {
 		const {args, flags} = await this.parse(ListMovies)
 
-		console.log(colors.blue.bold(`Listing all movies in the given path [${args.path}]`))
+		this.log(colors.blue.bold(`Listing all movies in the given path [${args.path}]`))
 		const spinner = ora(LogMessages.WarmUp).start()
 
 		// Collect all promises from the async generator into an array
@@ -101,33 +102,29 @@ export default class ListMovies extends Command {
 				groupCount[fileDetails.group] = (groupCount[fileDetails.group] || 0) + 1
 			}
 		}
-		spinner.stop()
 
-		console.log(results.map(r => r.fileDetails.filePath))
+		spinner.stop()
 
 		// Generate Report
 		const concerns = results
 			.filter(r => Number(r.videoDetails.height) < flags.minAcceptableHeight).length
-		console.log(colors.green.bold(`\n${LogMessages.ReportSummary}`))
-		console.log(`Total Movie Files: ${results.length}`)
-		console.log(colors.red(`Total Concerns (Resolution < ${flags.minAcceptableHeight}): ${concerns}`))
-		console.log(`Unique Filenames: ${new Set(results.map(r => r.fileDetails.filename)).size}`)
-		console.log(`Movies in Kits: ${results.filter(r => r.fileDetails.isKit).length}`)
-		console.log('Movies by File Extension:')
-		Object.entries(extensionCount)
-			.forEach(([ext, count]) => console.log(` ${ext.toLowerCase()}: ${count}`))
-		console.log('Movies by File Group:')
-		Object.entries(groupCount)
-			.forEach(([grp, count]) => console.log(` ${grp}: ${count}`))
-		console.log('Movies by Resolution:')
-		Object.entries(resolutionCount)
-			.sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
-			.forEach(([res, count]) => console.log(` ${res}: ${count}`))
+		this.log(colors.green.bold(`\n${LogMessages.ReportSummary}`))
+		this.log(`Total Movie Files: ${results.length}`)
+		this.log(colors.red(`Total Concerns (Resolution < ${flags.minAcceptableHeight}): ${concerns}`))
+		this.log(`Unique Filenames: ${new Set(results.map(r => r.fileDetails.filename)).size}`)
+		this.log(`Movies in Kits: ${results.filter(r => r.fileDetails.isKit).length}`)
+		this.log('Movies by File Extension:')
+		for (const [ext, count] of Object.entries(extensionCount)) this.log(` ${ext.toLowerCase()}: ${count}`)
+		this.log('Movies by File Group:')
+		for (const [grp, count] of Object.entries(groupCount)) this.log(` ${grp}: ${count}`)
+		this.log('Movies by Resolution:')
+		for (const [res, count] of Object.entries(resolutionCount)
+			.sort((a, b) => Number.parseInt(b[0], 10) - Number.parseInt(a[0], 10))) this.log(` ${res}: ${count}`)
 
 		return {
+			concerns: results.filter(r => Number(r.videoDetails.height) < flags.minAcceptableHeight),
 			results,
 			total: results.length,
-			concerns: results.filter(r => Number(r.videoDetails.height) < flags.minAcceptableHeight),
 		} 
 	}
 }

@@ -2,23 +2,23 @@
  * Enum for console symbols to visually differentiate log message types.
  */
 export enum Symbol {
-	Success = '✔',
 	Failure = '✘',
-	Warning = '⚠',
 	Info = 'ℹ',
+	Success = '✔',
+	Warning = '⚠',
 }
 
 /**
  * Enum for common log messages used across the application.
  */
 export enum LogMessages {
-	WarmUp = 'System is warming up...',
-	SomethingWentWrong = 'Something went wrong. Please try again later.',
-	OperationSuccessful = 'Operation completed successfully.',
-	InvalidInput = 'Invalid input provided.',
 	ConnectionError = 'Failed to connect to the server.',
 	DataRetrieved = 'Data retrieved successfully.',
+	InvalidInput = 'Invalid input provided.',
+	OperationSuccessful = 'Operation completed successfully.',
 	ReportSummary = 'Report Summary',
+	SomethingWentWrong = 'Something went wrong. Please try again later.',
+	WarmUp = 'System is warming up...',
 }
 
 /**
