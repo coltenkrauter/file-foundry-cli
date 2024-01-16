@@ -45,8 +45,8 @@
   "main": "",
   "name": "file-foundry-cli",
   "oclif": {
-    "bin": "ffc",
-    "dirname": "ffc",
+    "bin": "ff",
+    "dirname": "ff",
     "commands": "./dist/commands",
     "plugins": [
       "@oclif/plugin-help",

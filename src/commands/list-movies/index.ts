@@ -25,31 +25,31 @@ export default class ListMovies extends Command {
 	public static flags = {
 		depth: Flags.integer({
 			aliases: ['d'],
-			description: 'How many directories should be recursed (default: infinite)?',
+			description: 'How many directories should be recursed?',
 			required: false,
 			default: Number.POSITIVE_INFINITY,
 		}),
 		omitPrefixes: Flags.string({
 			aliases: ['op'],
-			description: `Omit files that match one of the given prefixes (default: . (hidden files))})?`,
+			description: 'Omit files that match one of the given prefixes.',
 			required: false,
 			default: '.',
 		}),
 		extensions: Flags.string({
 			aliases: ['e'],
-			description: `Replace the default movie file extensions used during the scan. (default: ${videoExtensions.join(',')})?`,
+			description: 'Replace the default movie file extensions used during the scan.',
 			required: false,
 			default: videoExtensions.join(','),
 		}),
 		omitSuffixes: Flags.string({
 			aliases: ['os'],
-			description: `Omit files that match one of the given suffixes (default: ${plexExtrasSuffixes.join(',')})?`,
+			description: 'Omit files that match one of the given suffixes (extensions ignored).',
 			required: false,
 			default: plexExtrasSuffixes.join(','),
 		}),
 		minAcceptableHeight: Flags.integer({
 			aliases: ['d'],
-			description: 'How many directories should be recursed (default: 720)?',
+			description: 'What is the minimum acceptable height in pixels?',
 			required: false,
 			default: 720,
 		}),
@@ -57,7 +57,7 @@ export default class ListMovies extends Command {
 
 	public static args = {
 		path: Args.string({
-			description: 'List all movies in the given directory. (default: ./)',
+			description: 'List all movies in the given directory.',
 			required: false,
 			default: './',
 		}),
