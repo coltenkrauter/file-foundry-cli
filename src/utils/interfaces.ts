@@ -5,6 +5,7 @@ export interface FileDetails {
 	filePath: string
 	filename: string
 	isKit: boolean
+	group: string
 }
 
 export interface VideoDetails {

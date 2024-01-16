@@ -5,7 +5,7 @@
  * @returns {string} The string with all whitespace removed.
  */
 export function removeWhitespace(str: string): string {
-  return str.replace(/\s+/g, '')
+	return str.replace(/\s+/g, '')
 }
 
 /**
@@ -15,7 +15,7 @@ export function removeWhitespace(str: string): string {
  * @returns An empty string if the index equals 1, otherwise returns 's'.
  */
 export function plural(index: number): string {
-  return index === 1 ? '' : 's'
+	return index === 1 ? '' : 's'
 }
 
 /**
@@ -27,8 +27,8 @@ export function plural(index: number): string {
  * @returns {string} The first character of the input string in lowercase, or an empty string if the input is empty.
  */
 export function getLowerFirstChar(str: string): string {
-  if (str.length === 0) return ''
-  return str.charAt(0).toLowerCase()
+	if (str.length === 0) return ''
+	return str.charAt(0).toLowerCase()
 }
 
 /**
@@ -41,8 +41,24 @@ export function getLowerFirstChar(str: string): string {
  * and all other letters in lowercase, similar to a title case.
  */
 export function capitalize(str: string): string {
-  return str.toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
+	return str.toLowerCase()
+		.split(' ')
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ')
+}
+
+/**
+ * Parses a comma-separated values string into an array, removing whitespace.
+ *
+ * @param {string} str - The comma-separated values string.
+ * @returns {string[]} An array of values without whitespace.
+ * @throws {Error} Throws an error if there are consecutive commas in the input.
+ */
+export function parseList(str: string): string[] {
+	if (str.match(/,,/)) {
+		throw new Error("Input contains consecutive commas, which is not allowed.");
+	}
+
+	const noWhitespaceString = removeWhitespace(str);
+	return noWhitespaceString.split(',');
 }

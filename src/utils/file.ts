@@ -1,5 +1,10 @@
 import {readdirSync, statSync} from 'node:fs'
-import {basename, dirname, join} from 'node:path'
+import {basename as _basename, dirname as _dirname, extname as _extname, join} from 'node:path'
+import {memoize} from './memoize.js'
+
+export const basename = memoize(_basename)
+export const dirname = memoize(_dirname)
+export const extname = memoize(_extname)
 
 /**
  * Recursively lists files in a directory and its subdirectories up to a given depth.
@@ -7,13 +12,14 @@ import {basename, dirname, join} from 'node:path'
  * @param {string} path - The directory path to scan.
  * @param {number} depth - The depth of subdirectories to traverse. 0 for the current directory,
  * 1 for its immediate subdirectories, etc. Negative depth returns an empty array.
- * @param {string} omitPrefix - Optional. Prefix of files to ignore.
+ * @param {string[]} omitPrefixes - Optional. List of prefixes of files to ignore.
+ * @param {string[]} omitSuffixes - Optional. List of suffixes of files to ignore.
  * @returns {string[]} An array of file paths.
  *
  * This function reads the directory contents using readdirSync. For each item, if it's a directory,
  * it recursively calls itself with decremented depth. If it's a file, its path is added to the results.
  */
-export function * listFiles(path: string, depth: number, omitPrefix?: string): Generator<string> {
+export function * listFiles(path: string, depth: number, omitPrefixes?: string[], omitSuffixes?: string[]): Generator<string> {
 	if (depth < 0) {
 		return
 	}
@@ -21,9 +27,10 @@ export function * listFiles(path: string, depth: number, omitPrefix?: string): G
 	const files = readdirSync(path)
 	for (const file of files) {
 		const filePath = join(path, file)
+		const filename = basename(filePath)
 		if (statSync(filePath).isDirectory()) {
-			yield * listFiles(filePath, depth - 1, omitPrefix)
-		} else if (!basename(filePath).startsWith(String(omitPrefix))) {
+			yield * listFiles(filePath, depth - 1, omitPrefixes, omitSuffixes)
+		} else if (!startsWithOmittedPrefix(filename, omitPrefixes) && !endsWithOmmitedSuffix(filename, omitSuffixes)) {
 			yield filePath
 		}
 	}
@@ -32,14 +39,14 @@ export function * listFiles(path: string, depth: number, omitPrefix?: string): G
 /**
  * Returns the filename without its extension(s).
  * 
- * @param filePath The full path of the file.
- * @returns The filename without extension(s).
+ * @param {string} filePath - The full path of the file.
+ * @returns {string} The memoized filename without extension(s).
  */
-export function getFilenameWithoutExt(filePath: string): string {
+const getFilenameWithoutExt = memoize((filePath: string): string => {
 	const base = basename(filePath)
 	const firstDotIndex = base.indexOf('.')
 	return firstDotIndex === -1 ? base : base.substring(0, firstDotIndex)
-}
+})
 
 /**
  * Checks if a file is part of a kit, meaning it's in a directory with the same base name.
@@ -52,4 +59,50 @@ export async function isKit(filePath: string): Promise<boolean> {
 	const fileNameWithoutExt = getFilenameWithoutExt(filePath)
 
 	return directoryName === fileNameWithoutExt
+}
+
+/**
+ * Returns the group which is the the parent directory name of the kit or file.
+ * 
+ * @param filePath The full path of the file.
+ * @returns The group which is the the parent directory name of the kit or file.
+ */
+export async function getGroup(filePath: string): Promise<string> {
+	const directory = dirname(filePath)
+	if (await isKit(filePath)) {
+		const parentDirectory = dirname(directory)
+		return basename(parentDirectory)
+	}
+
+	return basename(directory)
+}
+
+/**
+ * Check if a filename (ignoring extensions) ends with one of the omited suffixes.
+ *
+ * @param {string} filename - The filename to check.
+ * @param {string[]} omitSuffixes - Optional. List of suffixes of files to ignore.
+ * @returns {boolean} True if the filename (without extensions) ends with an omitted suffix, false otherwise.
+ */
+export function endsWithOmmitedSuffix(filename: string, omitSuffixes?: string[]): boolean {
+	if (!omitSuffixes) {
+		return false
+	}
+
+	return omitSuffixes.some((suffix) => getFilenameWithoutExt(filename).endsWith(suffix))
+}
+
+/**
+ * Check if a filename starts with one of the omitted prefixes.
+ *
+ * @param {string} filename - The filename to check.
+ * @param {string[]} omitPrefixes - Optional. List of prefixes of files to ignore.
+ * @returns {boolean} True if the filename starts with an omitted prefix, false otherwise.
+ */
+export function startsWithOmittedPrefix(filename: string, omitPrefixes?: string[]): boolean {
+	if (!omitPrefixes) {
+		return false
+	}
+
+	return omitPrefixes.some((prefix) => filename.startsWith(prefix))
 }

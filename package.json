@@ -9,6 +9,7 @@
     "@oclif/plugin-plugins": "^4",
     "colors": "^1.4.0",
     "fluent-ffmpeg": "^2.1.2",
+    "memoize-one": "^6.0.0",
     "ora": "^8.0.1"
   },
   "description": "The File Foundry CLI is your ultimate companion for managing and organizing files on your media server.",
