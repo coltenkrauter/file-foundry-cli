@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 
-import {printIntro, printOutro, printGracefulOutro} from './helpers.js'
+import {printGracefulOutro, printIntro, printOutro} from './helpers.js'
 
 async function main() {
-  printIntro()
-  const {execute} = await import('@oclif/core')
-  await execute({dir: import.meta.url})
-  printOutro()
+	printIntro()
+	const {execute} = await import('@oclif/core')
+	await execute({dir: import.meta.url})
+	printOutro()
 }
 
 process.on('SIGINT', () => {
-  printGracefulOutro();
-  process.exit(0);
+	printGracefulOutro();
+	// eslint-disable-next-line no-process-exit
+	process.exit(0);
 });
 
 await main()

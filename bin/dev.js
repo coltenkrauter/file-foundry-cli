@@ -1,6 +1,5 @@
-#!/usr/bin/env -S node --loader ts-node/esm --no-warnings=ExperimentalWarning
 
-import {printIntro, printOutro, printGracefulOutro} from './helpers.js'
+import {printGracefulOutro, printIntro, printOutro} from './helpers.js'
 
 async function main() {
   printIntro()
@@ -11,6 +10,7 @@ async function main() {
 
 process.on('SIGINT', () => {
   printGracefulOutro();
+  // eslint-disable-next-line no-process-exit
   process.exit(0);
 });
 

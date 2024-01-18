@@ -4,13 +4,9 @@ import colors from 'colors'
 import ora from 'ora'
 
 import {LogMessages, plexExtrasSuffixes, videoExtensions} from '../../utils/constants.js'
-import {VideoResult, listVideos, parseList, plural} from '../../utils/index.js'
+import {listVideos, parseList, plural} from '../../utils/index.js'
+import {ListMoviesResult} from './interfaces.js'
 
-interface ListMoviesResult {
-	concerns: VideoResult[]
-	results: VideoResult[]
-	total: number
-}
 export default class ListMovies extends Command {
 	public static args = {
 		path: Args.string({
@@ -71,7 +67,7 @@ export default class ListMovies extends Command {
 		const spinner = ora(LogMessages.WarmUp).start()
 
 		// Collect all promises from the async generator into an array
-		const results: VideoResult[] = []
+		const results = []
 		const extensionCount: {[key: string]: number} = {}
 		const resolutionCount: {[key: string]: number} = {}
 		const groupCount: {[key: string]: number} = {}

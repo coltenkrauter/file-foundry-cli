@@ -8,15 +8,12 @@ The File Foundry CLI is your ultimate companion for managing and organizing file
 ## Usage
 <!-- usage -->
 ```zsh
-$ npm install -g file-foundry-cli
-$ ff COMMAND
-running command...
-$ ff (--version)
-file-foundry-cli/0.0.0 darwin-arm64 node-v18.18.0
-$ ff --help [COMMAND]
-USAGE
-$ ff COMMAND
-...
+npm install -g file-foundry-cli
+ff COMMAND
+ff --help [COMMAND]
+
+# To use The Movie Database (TMDB), supply an api key
+export TMDB_API_KEY=THE-KEY-FROM-TMDB
 ```
 <!-- usagestop -->
 
