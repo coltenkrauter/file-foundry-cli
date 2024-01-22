@@ -1,4 +1,4 @@
-import { VideoResult } from "../../utils/interfaces.js"
+import {VideoResult} from './interfaces.js'
 
 export interface ListMoviesResult {
 	concerns: VideoResult[]

@@ -1,3 +1,5 @@
+import {KeyToStringMapping} from './interfaces.js'
+
 /**
  * Removes all whitespace from the given string.
  *
@@ -61,4 +63,23 @@ export function parseList(str: string): string[] {
 
 	const noWhitespaceString = removeWhitespace(str);
 	return noWhitespaceString.split(',');
+}
+
+/**
+ * Formats command-line arguments and flags into a string.
+ * @param {string} commandName - The name of the command.
+ * @param {KeyToStringMapping} args - Command-line arguments as key-value pairs.
+ * @param {KeyToStringMapping[]} flags - Command-line flags as key-value pairs.
+ * @returns {string} - The formatted input string.
+ */
+export function formatArgsAndFlags(commandName: string, args: KeyToStringMapping, flags: KeyToStringMapping) {
+	const argsString = Object.entries(args)
+		.map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+		.join(', ');
+
+	const flagsString = Object.entries(flags)
+		.map(([key, value]) => `--${key}=${JSON.stringify(value)}`)
+		.join(' ');
+
+	return `${commandName} ${argsString} ${flagsString}`;
 }

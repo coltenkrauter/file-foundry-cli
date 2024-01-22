@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-import {printGracefulOutro, printIntro, printOutro} from './helpers.js'
+import {printGracefulOutro, printIntro, printOutro, setLogLevel} from './helpers.js'
 
 async function main() {
 	printIntro()
+	setLogLevel()
 	const {execute} = await import('@oclif/core')
 	await execute({dir: import.meta.url})
 	printOutro()

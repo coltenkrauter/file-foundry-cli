@@ -54,3 +54,11 @@ export interface TMDBMovie {
     vote_average: number
     vote_count: number
 }
+
+export enum LogLevel {
+	debug = 'debug',
+	error = 'error',
+	info = 'info',
+	superDebug = 'super-debug',
+	warn = 'warn',
+}

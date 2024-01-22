@@ -1,13 +1,14 @@
-import {Args, Command, Flags} from '@oclif/core'
+import {Args, Flags} from '@oclif/core'
 // eslint-disable-next-line no-restricted-imports
 import colors from 'colors'
 import ora from 'ora'
 
+import {BaseCommand} from '../../base.js'
 import {LogMessages, plexExtrasSuffixes, videoExtensions} from '../../utils/constants.js'
 import {listVideos, parseList, plural} from '../../utils/index.js'
-import {ListMoviesResult} from './interfaces.js'
+import {ListMoviesResult} from '../../utils/list-movies.interfaces.js'
 
-export default class ListMovies extends Command {
+export default class ListMovies extends BaseCommand<typeof ListMovies> {
 	public static args = {
 		path: Args.string({
 			default: './',
@@ -63,7 +64,7 @@ export default class ListMovies extends Command {
 	async run(): Promise<ListMoviesResult> {
 		const {args, flags} = await this.parse(ListMovies)
 
-		this.log(colors.blue.bold(`Listing all movies in the given path [${args.path}]`))
+		this.logger.info(colors.blue.bold(`Listing all movies in the given path [${args.path}]`))
 		const spinner = ora(LogMessages.WarmUp).start()
 
 		// Collect all promises from the async generator into an array
@@ -97,6 +98,8 @@ export default class ListMovies extends Command {
 			if (fileDetails.group) {
 				groupCount[fileDetails.group] = (groupCount[fileDetails.group] || 0) + 1
 			}
+
+			this.debug(result)
 		}
 
 		spinner.stop()
@@ -104,19 +107,18 @@ export default class ListMovies extends Command {
 		// Generate Report
 		const concerns = results
 			.filter(r => Number(r.videoDetails.height) < flags.minAcceptableHeight).length
-		this.log(colors.green.bold(`\n${LogMessages.ReportSummary}`))
-		this.log(`Total Movie Files: ${results.length}`)
-		this.log(colors.red(`Total Concerns (Resolution < ${flags.minAcceptableHeight}): ${concerns}`))
-		this.log(`Unique Filenames: ${new Set(results.map(r => r.fileDetails.filename)).size}`)
-		this.log(`Movies in Kits: ${results.filter(r => r.fileDetails.isKit).length}`)
-		this.log('Movies by File Extension:')
-		for (const [ext, count] of Object.entries(extensionCount)) this.log(` ${ext.toLowerCase()}: ${count}`)
-		this.log('Movies by File Group:')
-		for (const [grp, count] of Object.entries(groupCount)) this.log(` ${grp}: ${count}`)
-		this.log('Movies by Resolution:')
+		this.logger.info(colors.green.bold(`\n${LogMessages.ReportSummary}`))
+		this.logger.info(`Total Movie Files: ${results.length}`)
+		this.logger.info(colors.red(`Total Concerns (Resolution < ${flags.minAcceptableHeight}): ${concerns}`))
+		this.logger.info(`Unique Filenames: ${new Set(results.map(r => r.fileDetails.filename)).size}`)
+		this.logger.info(`Movies in Kits: ${results.filter(r => r.fileDetails.isKit).length}`)
+		this.logger.info('Movies by File Extension:')
+		for (const [ext, count] of Object.entries(extensionCount)) this.logger.info(` ${ext.toLowerCase()}: ${count}`)
+		this.logger.info('Movies by File Group:')
+		for (const [grp, count] of Object.entries(groupCount)) this.logger.info(` ${grp}: ${count}`)
+		this.logger.info('Movies by Resolution:')
 		for (const [res, count] of Object.entries(resolutionCount)
-			.sort((a, b) => Number.parseInt(b[0], 10) - Number.parseInt(a[0], 10))) this.log(` ${res}: ${count}`)
-
+			.sort((a, b) => Number.parseInt(b[0], 10) - Number.parseInt(a[0], 10))) this.logger.info(` ${res}: ${count}`)
 		return {
 			concerns: results.filter(r => Number(r.videoDetails.height) < flags.minAcceptableHeight),
 			results,
