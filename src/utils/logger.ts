@@ -1,35 +1,26 @@
+ 
 // eslint-disable-next-line no-restricted-imports
 import colors from 'colors'
 import {homedir} from 'node:os'
 import {Logger, createLogger, format, transports} from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
 
-import {LogLevel} from './interfaces.js'
+import {formatColorFunctions, formatRemoveAsciiColors, formatRemoveLeadingNewline, formatTime} from './formats.js'
+import {ExtendedLogger, LogLevel} from './interfaces.js'
+
+export const {blue, gray, green, red, yellow} = colors
 
 const logDir = `${homedir()}/.file-foundry-cli/logs/`
 
-let logger: Logger
+let logger: ExtendedLogger
 
 const levels = {
-    [LogLevel.debug]: 3,
-    [LogLevel.error]: 0,
-    [LogLevel.info]: 2,
-    [LogLevel.warn]: 1,
-};
-
-const formatIsoDate = format.timestamp({ format: 'YYYY-MM-DDTHH:mm:ss.SSSZ' }) // ISO 8601
-const formatRemoveLeadingNewline = format((info) => ({
-    ...info,
-    // Remove leading newline
-    message: info?.message?.startsWith('\n') ? info.message.slice(2) : info?.message,
-}))()
-
-const formatRemoveAsciiColors = format((info) => ({
-    ...info,
-    // Remove ascii colors
-    // eslint-disable-next-line unicorn/no-hex-escape, no-control-regex
-    message: info?.message?.replace(/\x1B\[\d+m/g, ''),
-}))()
+    [LogLevel.debug]: 4,
+    [LogLevel.error]: 1,
+    [LogLevel.important]: 0,
+    [LogLevel.info]: 3,
+    [LogLevel.warn]: 2,
+}
 
 export function initializeLogger(
     level: LogLevel = LogLevel.info,
@@ -46,7 +37,10 @@ export function initializeLogger(
             levels,
 			transports: [
 				new transports.Console({
-					format: format.printf(({ message }) => message),
+					format: format.combine(
+                        formatColorFunctions,
+                        format.printf(({ message }) => message),
+                    ),
 					level,
 				}),
 				new DailyRotateFile({
@@ -56,20 +50,23 @@ export function initializeLogger(
                         // Order matters
                         formatRemoveAsciiColors,
                         formatRemoveLeadingNewline,
-                        formatIsoDate,
-                        format.printf(({ level, message, timestamp }) => `[${timestamp}] [${runId}] [${level.toUpperCase()}] [${message}]`)
+                        formatTime,
+                        format.printf(({ level, message, timestamp }) => `[${timestamp}] [${runId}] [${level.toUpperCase()}] ${message}`)
                     ),
 					maxFiles: '30d', // 30 days of files will be retained
 					maxSize: '20m', // 20 megabytes
 					zippedArchive: true,
 				}),
 			],
-		})
+		}) as ExtendedLogger
 	}
 
-    console.log(colors.yellow.bold('Winston Logger Instantiated'))
-    console.log(colors.yellow.bold(`Log Level: ${level.toUpperCase()}`))
-    console.log(colors.yellow.bold(`Run ID: ${runId}`))
-    console.log(colors.yellow.bold(`Log Directory: ${logDir}`))
+    logger.info('Winston Logger Instantiated', {color: blue})
+    logger.important(`Log Level: ${level.toUpperCase()}`, {color: blue})
+    logger.important(`Run ID: ${runId}`, {color: blue})
+    logger.important(`Log Directory: ${logDir}`, {color: blue})
+    logger.important()
+    logger.important('–'.repeat(92), {color: blue})
+    logger.important()
 	return logger
 }

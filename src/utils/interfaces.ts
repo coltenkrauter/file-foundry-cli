@@ -1,3 +1,5 @@
+import { Logger } from "winston"
+
 export interface FileDetails {
 	additionalExtensions: string[]
 	baseFilename: string
@@ -55,10 +57,16 @@ export interface TMDBMovie {
     vote_count: number
 }
 
+
 export enum LogLevel {
-	debug = 'debug',
-	error = 'error',
-	info = 'info',
-	superDebug = 'super-debug',
-	warn = 'warn',
+    debug = 'debug',
+    error = 'error',
+    important = 'important',
+    info = 'info',
+    superDebug = 'super-debug',
+    warn = 'warn'
+}
+
+export interface ExtendedLogger extends Logger {
+	important: (message?: string, color?: unknown) => void
 }

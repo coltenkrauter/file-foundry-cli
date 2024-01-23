@@ -3,22 +3,8 @@ import colors from 'colors'
 
 let startTime;
 
-function formatAndLog(text=' ', colorFn=colors.green) {
-    const maxLength = 92
-    const prefix = colors.green('✠✠✠✠✠✠ ')
-    const suffix = colors.green(' ✠✠✠✠✠✠')
-
-    // Split the text into chunks of maxLength or less
-    const chunks = []
-    for (let i = 0; i < text.length; i += maxLength) {
-        chunks.push(text.slice(i, i + maxLength))
-    }
-
-    // Format and log each chunk
-    for (const chunk of chunks) {
-        const formattedChunk = prefix + colorFn(chunk.padEnd(maxLength)) + suffix
-        console.log(formattedChunk)
-    }
+function formatAndLog(text, colorFn = colors.green) {
+    console.log(colorFn(text ?? ''))
 }
 
 export function printIntro() {

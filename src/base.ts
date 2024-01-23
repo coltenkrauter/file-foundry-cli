@@ -1,7 +1,7 @@
 import {Command, Flags, Interfaces} from '@oclif/core'
 import {Logger} from 'winston'
 
-import {formatArgsAndFlags} from './utils/index.js'
+import {LogMessages, formatArgsAndFlags} from './utils/index.js'
 import {LogLevel} from './utils/interfaces.js'
 import {initializeLogger} from './utils/logger.js'
 import {getRunId} from './utils/uuid.js'
@@ -31,13 +31,13 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async catch(err: Error & {exitCode?: number}): Promise<any> {
-    this.logger.debug(`ERROR FOR RUN [${this.runId}]`)
+    this.logger.debug(`${LogMessages.RunEnd} [${this.runId}]`)
     return super.catch(err)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async finally(_: Error | undefined): Promise<any> {
-    this.logger.debug(`END OF RUN [${this.runId}]`)
+    this.logger.debug(`${LogMessages.RunError} [${this.runId}]`)
     return super.finally(_)
   }
 
@@ -51,7 +51,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       strict: this.ctor.strict,
     })
     this.logger = initializeLogger(flags['log-level'], this.runId)
-    this.logger.debug(`START OF RUN [${this.runId}]`)
+    this.logger.debug(`${LogMessages.RunStart} [${this.runId}]`)
     this.logger.debug(formatArgsAndFlags('ff', args, flags))
     this.args = args as Args<T>
     this.flags = flags as Flags<T>

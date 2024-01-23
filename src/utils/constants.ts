@@ -17,6 +17,9 @@ export enum LogMessages {
 	InvalidInput = 'Invalid input provided.',
 	OperationSuccessful = 'Operation completed successfully.',
 	ReportSummary = 'Report Summary',
+	RunEnd = 'END OF RUN',
+	RunError = 'RUN ERROR',
+	RunStart = 'START OF RUN',
 	SomethingWentWrong = 'Something went wrong. Please try again later.',
 	WarmUp = 'System is warming up...',
 }
