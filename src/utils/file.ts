@@ -1,5 +1,6 @@
 import {readdirSync, statSync} from 'node:fs'
-import {basename as _basename, dirname as _dirname, extname as _extname, join} from 'node:path'
+import {basename as _basename, dirname as _dirname, extname as _extname, join, sep} from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import {memoize} from './memoize.js'
 
@@ -106,4 +107,32 @@ export function startsWithOmittedPrefix(filename: string, omitPrefixes?: string[
 	}
 
 	return omitPrefixes.some((prefix) => filename.startsWith(prefix))
+}
+
+/**
+ * Derives the command name based on the directory structure of the caller's source code file,
+ * enabling dynamic generation of a command name that reflects the command files' hierarchical organization.
+ * 
+ * @param {string} callerUrl - The URL of the caller file, typically obtained from `import.meta.url`.
+ * @returns {string} The derived command name, with directory names concatenated using spaces.
+ * If the file is located at or above the 'commands' directory in the path, an empty string is returned.
+ */
+export const getCommandName = (callerUrl: string): string => {
+	const commandNameParts = []
+	const currentFileDir = dirname(fileURLToPath(callerUrl))
+	const baseDir = `${sep}commands${sep}`
+	const startIndex = currentFileDir.indexOf(baseDir)
+
+	if (startIndex !== -1) {
+		const relevantPath = currentFileDir.slice(Math.max(0, startIndex + baseDir.length))
+		const pathSegments = relevantPath.split(sep)
+
+		for (const segment of pathSegments) {
+			if (segment !== '..' && segment !== '.') {
+				commandNameParts.unshift(segment)
+			}
+		}
+	}
+
+	return commandNameParts.reverse().join(' ')
 }

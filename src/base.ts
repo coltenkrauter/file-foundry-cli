@@ -31,13 +31,13 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async catch(err: Error & {exitCode?: number}): Promise<any> {
-    this.logger.debug(`${LogMessages.RunEnd} [${this.runId}]`)
+    this.logger.debug(`${LogMessages.RunError} [${this.runId}]`)
     return super.catch(err)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async finally(_: Error | undefined): Promise<any> {
-    this.logger.debug(`${LogMessages.RunError} [${this.runId}]`)
+    this.logger.debug(`${LogMessages.RunEnd} [${this.runId}]`)
     return super.finally(_)
   }
 
@@ -52,7 +52,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     })
     this.logger = initializeLogger(flags['log-level'], this.runId)
     this.logger.debug(`${LogMessages.RunStart} [${this.runId}]`)
-    this.logger.debug(formatArgsAndFlags('ff', args, flags))
+    this.logger.debug(`COMMAND: ${formatArgsAndFlags('ff', args, flags)}`)
     this.args = args as Args<T>
     this.flags = flags as Flags<T>
   }

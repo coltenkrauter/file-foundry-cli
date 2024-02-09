@@ -9,6 +9,7 @@ import {
 	getLowerFirstChar,
 	isKit,
 	listFiles,
+	logger,
 } from './index.js'
 
 /**
@@ -45,7 +46,7 @@ export async function getVideoDetails(filePath: string): Promise<VideoDetails> {
 		// eslint-disable-next-line import/no-named-as-default-member
 		ffmpeg.ffprobe(filePath, (error: string, metadata: { streams: FfprobeStream[] }) => {
 			if (error) {
-				console.error(filePath, error)
+				logger.error(filePath, error)
 				resolve({})
 			} else {
 				const videoStream = metadata.streams.find(s => s.codec_type === 'video')

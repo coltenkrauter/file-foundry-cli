@@ -12,7 +12,7 @@ export const {blue, gray, green, red, yellow} = colors
 
 const logDir = `${homedir()}/.file-foundry-cli/logs/`
 
-let logger: ExtendedLogger
+export let logger: ExtendedLogger
 
 const levels = {
     [LogLevel.debug]: 4,
@@ -44,7 +44,7 @@ export function initializeLogger(
 					level,
 				}),
 				new DailyRotateFile({
-                    datePattern: 'YYYY-MM',
+                    datePattern: 'YYYY-MM-DD',
 					filename: `${logDir}/%DATE%.log`,
 					format: format.combine(
                         // Order matters

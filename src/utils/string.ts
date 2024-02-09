@@ -50,22 +50,6 @@ export function capitalize(str: string): string {
 }
 
 /**
- * Parses a comma-separated values string into an array, removing whitespace.
- *
- * @param {string} str - The comma-separated values string.
- * @returns {string[]} An array of values without whitespace.
- * @throws {Error} Throws an error if there are consecutive commas in the input.
- */
-export function parseList(str: string): string[] {
-	if (/,,/.test(str)) {
-		throw new Error("Input contains consecutive commas, which is not allowed.");
-	}
-
-	const noWhitespaceString = removeWhitespace(str);
-	return noWhitespaceString.split(',');
-}
-
-/**
  * Formats command-line arguments and flags into a string.
  * @param {string} commandName - The name of the command.
  * @param {KeyToStringMapping} args - Command-line arguments as key-value pairs.
@@ -82,4 +66,26 @@ export function formatArgsAndFlags(commandName: string, args: KeyToStringMapping
 		.join(' ');
 
 	return `${commandName} ${argsString} ${flagsString}`;
+}
+
+/**
+ * Checks if the input is an object.
+ * @param {unknown} input - The input to be checked.
+ * @returns {boolean} True if the input is an object, false otherwise.
+ */
+export const isObject = (input: unknown): boolean => typeof input === 'object'
+	&& input !== null && !Array.isArray(input)
+
+/**
+ * Checks if a string is a valid JSON string.
+ * @param {string} str - The string to be checked.
+ * @returns {boolean} True if the string is a valid JSON string, false otherwise.
+ */
+export const isJsonString = (str: string) => {
+	try {
+		JSON.parse(str)
+		return true
+	} catch {
+		return false
+	}
 }
